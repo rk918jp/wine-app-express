@@ -1,22 +1,57 @@
-const express = require('express');
-const mysql = require('mysql');
+import { AppDataSource } from "./src/data-source"
+import { Wine } from "./src/entities/Wine"
+import { Request, Response } from "express"
+import 'reflect-metadata'
+// import { getConnection } from "typeorm";
+
+// データベース接続を確立する
+AppDataSource
+    .initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization:", err)
+    })
+
+const express = require("express");
 const app = express();
+// app.use(express.json())
+// const mysql = require('mysql');
 
-app.use(express.static('public'));
 
-// データベース接続情報
-const connection = mysql.createConnection({
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: 'password',
-  database: 'test'
+// ユーザー一覧を返す
+app.get('/wine', async (req: Request, res: Response, next: any) => {
+  await AppDataSource
+  .createQueryBuilder()
+  .insert()
+  .into(Wine)
+  .values([
+      { name: "aka"},
+      { name: "shiro"}
+    ])
+    .execute()
+    // res.send(wines)
+    // res.json(wines) //JSON形式で出力
 });
 
-// データベースに接続できたらコンソールにConnectedを表示
-connection.connect(function(err) {
-  if (err) throw err;
-  console.log('Connected');
+// ユーザー一覧を返す
+// app.get('/wine', async (req: Request, res: Response, next: any) => {
+//   const wines = await AppDataSource
+//   .createQueryBuilder()
+//   .insert()
+//   .into(Wine)
+//   .values([
+//       { name: "Timber" },
+//       { name: "Phantom" }
+//   ])
+//     res.send(wines)
+//     // res.json(wines) //JSON形式で出力
+// });
+
+app.listen(3306, () => {
+  console.log('ポート3306番で起動しましたよ！')
 });
 
-app.listen(3000);
+
+

@@ -9,13 +9,13 @@ export class Wine {
   public name: string = ''
 
   @Column()
-  public winery: string = ''
+  public winery: string = 'pari'
 
   @Column()
   public wineType: string = 'WineType'
 
   @Column()
-  public description: string = ''
+  public description: string = 'text'
 
 }
 
