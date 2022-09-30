@@ -1,16 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm'
+import Wine from "./Wine";
 
 @Entity('Winery')
 export class Winery {
   @PrimaryGeneratedColumn()
-	public id!: number;
+  id!: number;
 
   @Column()
-  public name: string = ''
+  name: string;
 
-  @Column()
-  public description: string = ''
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  description: string;
 
+  @OneToMany(() => Wine, (wine) => wine.winery)
+  wines: Wine[];
 }
 
 export default Winery;
