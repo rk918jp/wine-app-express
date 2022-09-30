@@ -8,11 +8,11 @@ export class Wine {
   @Column()
   public name: string = ''
 
-  @Column()
-  public winery: string = 'pari'
+  @Column({ default: 'Winery' })
+  public winery!: string;
 
-  @Column()
-  public wineType: string = 'WineType'
+  @Column({ default: 'WineType' })
+  public wineType!: string;
 
   @Column()
   public description: string = 'text'

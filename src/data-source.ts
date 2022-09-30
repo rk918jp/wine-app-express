@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   port: 3306,
   username: "root",
   password: "password",
-  database: "wine-app",
+  database: "wine_app",
   synchronize: true,
   logging: false,
   entities: [

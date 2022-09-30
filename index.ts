@@ -20,37 +20,25 @@ const app = express();
 // const mysql = require('mysql');
 
 
-// ユーザー一覧を返す
+// wineを返す
 app.get('/wine', async (req: Request, res: Response, next: any) => {
   await AppDataSource
   .createQueryBuilder()
   .insert()
   .into(Wine)
   .values([
-      { name: "aka"},
-      { name: "shiro"}
+      // { name: "aka"},
+      // { name: "shiro"}
     ])
     .execute()
     // res.send(wines)
     // res.json(wines) //JSON形式で出力
 });
 
-// ユーザー一覧を返す
-// app.get('/wine', async (req: Request, res: Response, next: any) => {
-//   const wines = await AppDataSource
-//   .createQueryBuilder()
-//   .insert()
-//   .into(Wine)
-//   .values([
-//       { name: "Timber" },
-//       { name: "Phantom" }
-//   ])
-//     res.send(wines)
-//     // res.json(wines) //JSON形式で出力
-// });
 
-app.listen(3306, () => {
-  console.log('ポート3306番で起動しましたよ！')
+
+app.listen(8080, () => {
+  console.log('ポート8080番で起動しましたよ！')
 });
 
 
