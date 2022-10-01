@@ -14,6 +14,24 @@ const app = express();
 // const mysql = require('mysql');
 
 
+// CORSエラー回避のための設定(何故か動かない)
+const allowCrossDomain = function(req: Request, res: Response, next: any) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, access_token'
+  );
+
+  // intercept OPTIONS method
+  if ('OPTIONS' === req.method) {
+    res.send(200);
+  } else {
+    next();
+  }
+}
+app.use(allowCrossDomain);
+
 // ワインの一覧を返す
 app.get('/wines', async (req: Request, res: Response, next: any) => {
   const wineRepository = AppDataSource.getRepository(Wine);
