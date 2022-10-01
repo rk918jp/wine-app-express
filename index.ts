@@ -47,19 +47,8 @@ app.get('/wines', async (req: Request, res: Response, next: any) => {
   });
 });
 
-// ユーザー一覧を返す
-// app.get('/wine', async (req: Request, res: Response, next: any) => {
-//   const wines = await AppDataSource
-//   .createQueryBuilder()
-//   .insert()
-//   .into(Wine)
-//   .values([
-//       { name: "Timber" },
-//       { name: "Phantom" }
-//   ])
-//     res.send(wines)
-//     // res.json(wines) //JSON形式で出力
-// });
+// TODO: ワインの詳細情報を返すエンドポイント作成(/wine/:id)
+
 
 app.listen(port, async () => {
   // データベース接続を確立する
