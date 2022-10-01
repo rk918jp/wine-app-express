@@ -6,25 +6,27 @@ import WineType from "./src/entities/WineType";
 import Winery from "./src/entities/Winery";
 // import { getConnection } from "typeorm";
 
+const port = 8080;
+
 const express = require("express");
 const app = express();
 // app.use(express.json())
 // const mysql = require('mysql');
 
 
-// ユーザー一覧を返す
-app.get('/wine', async (req: Request, res: Response, next: any) => {
-  await AppDataSource
-  .createQueryBuilder()
-  .insert()
-  .into(Wine)
-  .values([
-      { name: "aka"},
-      { name: "shiro"}
-    ])
-    .execute()
-    // res.send(wines)
-    // res.json(wines) //JSON形式で出力
+// ワインの一覧を返す
+app.get('/wines', async (req: Request, res: Response, next: any) => {
+  const wineRepository = AppDataSource.getRepository(Wine);
+  const wines = await wineRepository.find({
+    relations: {
+      winery: true,
+      wineTypes: true,
+    },
+  });
+  res.json({
+    result: "SUCCESS",
+    data: wines,
+  });
 });
 
 // ユーザー一覧を返す
@@ -41,7 +43,7 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
 //     // res.json(wines) //JSON形式で出力
 // });
 
-app.listen(3306, async () => {
+app.listen(port, async () => {
   // データベース接続を確立する
   try {
     await AppDataSource.initialize();
@@ -98,7 +100,7 @@ app.listen(3306, async () => {
     await AppDataSource.manager.save(wine);
   }
 
-  console.log('ポート3306番で起動しましたよ！')
+  console.log(`ポート${port}番で起動しましたよ！`);
 });
 
 
