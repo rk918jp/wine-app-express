@@ -1,21 +1,32 @@
-import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable} from 'typeorm'
+import Winery from "./Winery";
+import WineType from "./WineType";
+import Image from "./Image";
 
 @Entity('Wine')
 export class Wine {
   @PrimaryGeneratedColumn()
-	public id!: number;
+	id!: number;
 
   @Column()
-  public name: string = ''
+  name!: string; 
 
-  @Column({ default: 'Winery' })
-  public winery!: string;
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  description!: string;
 
-  @Column({ default: 'WineType' })
-  public wineType!: string;
+  @ManyToOne(() => Winery, (winery) => winery.wines)
+  winery!: Winery;
 
-  @Column()
-  public description: string = 'text'
+  @ManyToMany(() => WineType)
+  @JoinTable()
+  wineTypes!: WineType[];
+
+  @ManyToOne(() => Image)
+  @JoinTable()
+  image!: Image[];
 
 }
 
