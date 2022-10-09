@@ -66,6 +66,7 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
   
     // レコードがない場合のみサンプルデータを入稿
     if (count === 0) {
+      // WineTypeの入稿
       await AppDataSource
           .createQueryBuilder()
           .insert()
@@ -77,8 +78,61 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
           ])
           .execute();
 
+      // Wineryの入稿
+      await AppDataSource
+          .createQueryBuilder()
+          .insert()
+          .into(Winery)
+          .values([
+            { name: "ワイナリーA"},
+            { name: "ワイナリーB"},
+          ])
+          .execute();
+
+      // Imageの入稿
+      await AppDataSource
+          .createQueryBuilder()
+          .insert()
+          .into(Image)
+          .values([
+            { name: "A.jpeg" },
+            { name: "B.jpeg" },
+            { name: "C.webp" },
+            { name: "D.jpeg" },
+            { name: "E.jpeg" },
+          ])
+          .execute();
+
+      // Wineの入稿
+      // 関連付けるwinery, wineTypes, imageを取得
+      const wineryA = await AppDataSource
+          .getRepository(Winery)
+          .createQueryBuilder("winery")
+          .where("winery.name = :name", { name: "ワイナリーA" })
+          .getOne();
+
+      const wineTypes = await AppDataSource
+          .getRepository(WineType)
+          .createQueryBuilder("wine_type")
+          .where("wine_type.name in ('白ワイン', 'スパークリング')")
+          .getMany();
+
+      const wineImage = await AppDataSource
+          .getRepository(Image)
+          .createQueryBuilder("image")
+          // とりあえず最初の1件を設定
+          .getOne();
+
+      // Wineテーブルにinsert
+      const wine = new Wine();
+      wine.name = "ワインA";
+      wine.description = "おいしいワイン";
+      wine.winery = wineryA!;
+      wine.wineTypes = wineTypes!;
+      wine.image = wineImage!;
+      await AppDataSource.manager.save(wine);
+
     } else {
-  
       const wineryA = await AppDataSource
           .getRepository(Winery)
           .createQueryBuilder("winery")
@@ -95,7 +149,7 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
           .getRepository(Image)
           .createQueryBuilder("image")
           .where("image.type in ('.')")
-          .getMany();
+          .getOne();
 
       //wineデータ
       const wine = new Wine();
