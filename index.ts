@@ -66,6 +66,7 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
   
     // レコードがない場合のみサンプルデータを入稿
     if (count === 0) {
+      // WineTypeの入稿
       await AppDataSource
           .createQueryBuilder()
           .insert()
@@ -77,14 +78,39 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
           ])
           .execute();
 
-    } else {
-  
+           // Wineryの入稿
+      await AppDataSource
+      .createQueryBuilder()
+      .insert()
+      .into(Winery)
+      .values([
+        { name: "ワイナリーA"},
+        { name: "ワイナリーB"},
+      ])
+      .execute();
+
+      // Imageの入稿
+      await AppDataSource
+          .createQueryBuilder()
+          .insert()
+          .into(Image)
+          .values([
+            { name: "A.jpeg" },
+            { name: "B.jpeg" },
+            { name: "C.webp" },
+            { name: "D.jpeg" },
+            { name: "E.jpeg" },
+          ])
+          .execute();
+
+      // Wineの入稿
+      // 関連付けるwinery, wineTypes, imageを取得
       const wineryA = await AppDataSource
           .getRepository(Winery)
           .createQueryBuilder("winery")
           .where("winery.name = :name", { name: "ワイナリーA" })
           .getOne();
-  
+
       const wineTypes = await AppDataSource
           .getRepository(WineType)
           .createQueryBuilder("wine_type")
@@ -94,10 +120,11 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
       const wineImage = await AppDataSource
           .getRepository(Image)
           .createQueryBuilder("image")
-          .where("image.type in ('.')")
-          .getMany();
+          // とりあえず最初の1件を設定
+          .where("image.name = :name", { name: "A.jpeg" })
+          .getOne();
 
-      //wineデータ
+      // Wineテーブルにinsert
       const wine = new Wine();
       wine.name = "ワインA";
       wine.description = "おいしいワイン";
@@ -106,29 +133,42 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
       wine.image = wineImage!;
       await AppDataSource.manager.save(wine);
 
-      
-      await AppDataSource
-          .createQueryBuilder()
-          .insert()
-          .into(Wine)
-          .values([
-            {
-              name: "ワインC",
-              description: "おいしそうなワイン",
-              // winery: {id: 2},
-              winery: wineryA!,  // オブジェクトを渡すことも出来る
-              // wineTypes: [
-              //   {id: 1},
-              //   {id: 2},
-              // ],
-              wineTypes: wineTypes!,  // オブジェクトを渡すことも出来る
-              image: wineImage!,
-            }
-          ])
-          .execute();
-          AppDataSource.manager.save(wine);    
-      
+
+
+    } else {
+  
+
+
+        // 関連付けるwinery, wineTypes, imageを取得
+        const wineryB = await AppDataSource
+        .getRepository(Winery)
+        .createQueryBuilder("winery")
+        .where("winery.name = :name", { name: "ワイナリーB" })
+        .getOne();
+
+    const wineTypes = await AppDataSource
+        .getRepository(WineType)
+        .createQueryBuilder("wine_type")
+        .where("wine_type.name in ('赤ワイン','赤いワイン')")
+        .getMany();
+
+    const wineImage = await AppDataSource
+        .getRepository(Image)
+        .createQueryBuilder("image")
+        .where("image.name = :name", { name: "B.jpeg" })
+        .getOne();
+
+        // Wineテーブルにinsert
+        const wine = new Wine();
+        wine.name = "ワインB";
+        wine.description = "おいしいワイン";
+        wine.winery = wineryB!;
+        wine.wineTypes = wineTypes!;
+        wine.image = wineImage!;
+        await AppDataSource.manager.save(wine);
+          
     }
   
   console.log(`ポート${port}番で起動しましたよ！`)
 });
+

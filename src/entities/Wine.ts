@@ -24,9 +24,9 @@ export class Wine {
   @JoinTable()
   wineTypes!: WineType[];
 
-  @ManyToOne(() => Image)
-  @JoinTable()
-  image!: Image[];
+  @ManyToOne(() => Image, (image) => image.wines)
+  image!: Image;
+  wine: any;
 
 }
 

@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, } from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany,} from 'typeorm'
 import Wine from './Wine';
 // import Winery from "./Winery";
 // import WineType from "./WineType";
@@ -12,8 +12,8 @@ export class Image {
   name! : string;
   // name!: any | null;
 
-  @ManyToOne(() => Wine, (wine) => wine.id)
-  type!:  Image[]
+  @OneToMany(() => Wine, (wine) => wine.image)
+  wines!: Wine[];
 }
 
 export default Image;
