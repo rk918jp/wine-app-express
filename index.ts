@@ -49,6 +49,7 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
       relations: {
         winery: true,
         wineTypes: true,
+        image: true
       },
     });
     res.json({
