@@ -78,7 +78,7 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
           ])
           .execute();
 
-           // Wineryの入稿
+    // Wineryの入稿
       await AppDataSource
       .createQueryBuilder()
       .insert()
@@ -95,11 +95,11 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
           .insert()
           .into(Image)
           .values([
-            { name: "A.jpeg" },
-            { name: "B.jpeg" },
-            { name: "C.webp" },
-            { name: "D.jpeg" },
-            { name: "E.jpeg" },
+            { name: "A.jpeg" ,src: "/src/images/A.jpeg"},
+            { name: "B.jpeg" ,src: "/src/images/B.jpeg"},
+            { name: "C.webp" ,src: "/src/images/C.webp"},
+            { name: "D.jpeg" ,src: "/src/images/D.jpeg"},
+            { name: "E.jpeg" ,src: "/src/images/E.jpeg"},
           ])
           .execute();
 
@@ -120,8 +120,8 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
       const wineImage = await AppDataSource
           .getRepository(Image)
           .createQueryBuilder("image")
-          // とりあえず最初の1件を設定
-          .where("image.name = :name", { name: "A.jpeg" })
+          .where("image.name = :name", { name: "B.jpeg" })
+          // .where("image.src = :src", { name: "B.jpeg" })
           .getOne();
 
       // Wineテーブルにinsert
@@ -155,12 +155,13 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
     const wineImage = await AppDataSource
         .getRepository(Image)
         .createQueryBuilder("image")
-        .where("image.name = :name", { name: "B.jpeg" })
+        .where("image.name = :name", { name: "E.jpeg" })
+        // .where("image.src = :src", { src: "/images/B.jpeg" })
         .getOne();
 
         // Wineテーブルにinsert
         const wine = new Wine();
-        wine.name = "ワインB";
+        wine.name = "ワインE";
         wine.description = "おいしいワイン";
         wine.winery = wineryB!;
         wine.wineTypes = wineTypes!;

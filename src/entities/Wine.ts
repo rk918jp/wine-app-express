@@ -26,6 +26,7 @@ export class Wine {
 
   @ManyToOne(() => Image, (image) => image.wines)
   image!: Image;
+  // image?: String;
   wine: any;
 
 }

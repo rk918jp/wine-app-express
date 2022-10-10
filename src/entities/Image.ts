@@ -12,8 +12,12 @@ export class Image {
   name! : string;
   // name!: any | null;
 
+  @Column()
+  src: string;
+
   @OneToMany(() => Wine, (wine) => wine.image)
   wines!: Wine[];
+
 }
 
 export default Image;
