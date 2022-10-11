@@ -6,11 +6,15 @@ import WineType from "./src/entities/WineType";
 import Winery from "./src/entities/Winery";
 import Image from "./src/entities/Image";
 
+
 const port = 8080;
 const express = require("express");
 const app = express();
 app.get('/wine', async (req: Request, res: Response, next: any) => {
   });
+
+  //expressミドルウェア(画像表示用)
+  app.use(express.static(__dirname + "/public"));
 
 
   app.listen(port, async () => {
@@ -59,6 +63,21 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
   });
 
 // TODO: ワインの詳細情報を返すエンドポイント作成(/wine/:id)
+    app.get('/wine/:id', async (req: Request, res: Response, next: any) => {
+    const wineRepository = AppDataSource.getRepository(Wine);
+    const wines = await wineRepository.find({
+      relations: {
+        winery: true,
+        wineTypes: true,
+        image: true
+      },
+    });
+    res.json({
+      result: "SUCCESS",
+      data: wines,
+    });
+    });
+
 
   
     const count = await AppDataSource
@@ -73,9 +92,9 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
           .insert()
           .into(WineType)
           .values([
-            { name: "白ワイン", description: "白いワイン" },
-            { name: "赤ワイン", description: "赤いワイン" },
-            { name: "スパークリング", description: "シュワシュワするワイン" },
+            { name: "白ワイン" },
+            { name: "赤ワイン"},
+            { name: "シャンパン"},
           ])
           .execute();
 
@@ -85,8 +104,9 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
       .insert()
       .into(Winery)
       .values([
-        { name: "ワイナリーA"},
-        { name: "ワイナリーB"},
+        { name: "ボルドー"},
+        { name: "ブルゴーニュ"},
+        { name: "クトリア"},
       ])
       .execute();
 
@@ -96,11 +116,14 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
           .insert()
           .into(Image)
           .values([
-            { name: "A.jpeg" ,src: "/src/images/A.jpeg"},
-            { name: "B.jpeg" ,src: "/src/images/B.jpeg"},
-            { name: "C.webp" ,src: "/src/images/C.webp"},
-            { name: "D.jpeg" ,src: "/src/images/D.jpeg"},
-            { name: "E.jpeg" ,src: "/src/images/E.jpeg"},
+            { name: "01.webp" ,src: "/images/01.webp"},
+            { name: "02.webp" ,src: "/images/02.webp"},
+            { name: "03.jpg" ,src: "/images/03.jpg"},
+            { name: "04.jpg" ,src: "/images/04.jpg"},
+            { name: "21.webp" ,src: "/images/21.webp"},
+            { name: "22.jpg" ,src: "/images/22.jpg"},
+            { name: "23.jpg" ,src: "/images/23.jpg"},
+            { name: "24.jpg" ,src: "/images/24.jpg"},
           ])
           .execute();
 
@@ -109,65 +132,62 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
       const wineryA = await AppDataSource
           .getRepository(Winery)
           .createQueryBuilder("winery")
-          .where("winery.name = :name", { name: "ワイナリーA" })
+          .where("winery.name = :name", { name: "ボルドー" })
           .getOne();
 
       const wineTypes = await AppDataSource
           .getRepository(WineType)
           .createQueryBuilder("wine_type")
-          .where("wine_type.name in ('白ワイン', 'スパークリング')")
+          .where("wine_type.name in ('白ワイン')")
           .getMany();
 
       const wineImage = await AppDataSource
           .getRepository(Image)
           .createQueryBuilder("image")
-          .where("image.name = :name", { name: "B.jpeg" })
-          // .where("image.src = :src", { name: "B.jpeg" })
+          .where("image.name = :name", { name: "01.webp" })
           .getOne();
 
       // Wineテーブルにinsert
       const wine = new Wine();
-      wine.name = "ワインA";
-      wine.description = "おいしいワイン";
+      wine.name = "ドメーヌ バロン ド ロートシルト ポーイヤック レゼルブ スペシアル";
       wine.winery = wineryA!;
       wine.wineTypes = wineTypes!;
       wine.image = wineImage!;
       await AppDataSource.manager.save(wine);
 
-
+      
 
     } else {
   
 
 
-        // 関連付けるwinery, wineTypes, imageを取得
-        const wineryB = await AppDataSource
-        .getRepository(Winery)
-        .createQueryBuilder("winery")
-        .where("winery.name = :name", { name: "ワイナリーB" })
-        .getOne();
+      // const wineryA = await AppDataSource
+      // .getRepository(Winery)
+      // .createQueryBuilder("winery")
+      // .where("winery.name = :name", { name: "ブルゴーニュ" })
+      // .getOne();
 
-    const wineTypes = await AppDataSource
-        .getRepository(WineType)
-        .createQueryBuilder("wine_type")
-        .where("wine_type.name in ('赤ワイン','赤いワイン')")
-        .getMany();
+      // const wineTypes = await AppDataSource
+      //     .getRepository(WineType)
+      //     .createQueryBuilder("wine_type")
+      //     .where("wine_type.name in ('白ワイン')")
+      //     .getMany();
 
-    const wineImage = await AppDataSource
-        .getRepository(Image)
-        .createQueryBuilder("image")
-        .where("image.name = :name", { name: "E.jpeg" })
-        // .where("image.src = :src", { src: "/images/B.jpeg" })
-        .getOne();
+      // const wineImage = await AppDataSource
+      //     .getRepository(Image)
+      //     .createQueryBuilder("image")
+      //     .where("image.name = :name", { name: "D.jpeg" })
+      //     .getOne();
 
-        // Wineテーブルにinsert
-        const wine = new Wine();
-        wine.name = "ワインE";
-        wine.description = "おいしいワイン";
-        wine.winery = wineryB!;
-        wine.wineTypes = wineTypes!;
-        wine.image = wineImage!;
-        await AppDataSource.manager.save(wine);
+      // // Wineテーブルにinsert
+      // const wine = new Wine();
+      // wine.name = "ロエロ・アルネイス";
+      // // wine.description = "おいしいワイン";
+      // wine.winery = wineryA!;
+      // wine.wineTypes = wineTypes!;
+      // wine.image = wineImage!;
+      // await AppDataSource.manager.save(wine);
+      
           
     }
   

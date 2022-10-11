@@ -17,6 +17,30 @@ export class Wine {
   })
   description!: string;
 
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  oneWord: string;
+
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  country: string;
+
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  breed: string;
+
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  link: string;
+
   @ManyToOne(() => Winery, (winery) => winery.wines)
   winery!: Winery;
 
@@ -26,7 +50,6 @@ export class Wine {
 
   @ManyToOne(() => Image, (image) => image.wines)
   image!: Image;
-  // image?: String;
   wine: any;
 
 }
