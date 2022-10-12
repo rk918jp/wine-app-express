@@ -62,16 +62,20 @@ app.get('/wine', async (req: Request, res: Response, next: any) => {
     });
   });
 
-// TODO: ワインの詳細情報を返すエンドポイント作成(/wine/:id)
+//ワインの詳細情報を返すエンドポイント作成(/wine/:id)
     app.get('/wine/:id', async (req: Request, res: Response, next: any) => {
     const wineRepository = AppDataSource.getRepository(Wine);
-    const wines = await wineRepository.find({
+    const wines = await wineRepository.findOne({
       relations: {
         winery: true,
         wineTypes: true,
         image: true
       },
+      where: {
+        id: Number(req.params.id),
+      }
     });
+      console.log(wines);
     res.json({
       result: "SUCCESS",
       data: wines,
